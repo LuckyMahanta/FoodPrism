@@ -5,7 +5,6 @@ import emptyCartImage from '../../images/empty-cart.gif';
 import { toast } from 'react-hot-toast';
 import { loadStripe } from '@stripe/stripe-js'
 import { useNavigate } from 'react-router-dom'
-import { clearCart } from './CartActions';
 
 const Cart = () => {
   const productCartItem = useSelector((state) => state.product.cartItem);
@@ -20,7 +19,6 @@ const Cart = () => {
   const handlePayment = async () => {
     if (user.email) {
       const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
-      console.log("Sending request:", { userId: user._id, productCartItem });
   
       try {
         const res = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/checkout-payment`, {
@@ -32,13 +30,10 @@ const Cart = () => {
         });
   
         const data = await res.json();
-        console.log("Response from server:", data); 
   
         if (res.status === 200) {
           toast.loading("Redirecting to Payment Gateway...");
           stripe.redirectToCheckout({ sessionId: data.id });
-
-          dispatch(clearCart());
         } else {
           toast.error("Payment initiation failed. Please try again.");
         }

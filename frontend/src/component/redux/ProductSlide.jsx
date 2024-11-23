@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from 'react-hot-toast';
+import { saveCartState } from '../utility/SessionStorage';
 
 const initialState = {
     productList: [],
@@ -22,10 +23,12 @@ export const productSlide = createSlice({
                     item._id === action.payload._id ? { ...item, qty: item.qty + 1, total: (item.qty + 1) * item.price } : item
                 );
                 state.cartItem = updatedCartItem;
+                saveCartState({ cartItem: state.cartItem });
                 toast.success("Quantity updated in cart.");
             } else {
                 const total = action.payload.price
                 state.cartItem = [...state.cartItem, { ...action.payload, qty: 1, total: total }]
+                saveCartState({ cartItem: state.cartItem });
                 toast.success("Item successfully added to cart!");
             }
 
@@ -60,9 +63,10 @@ export const productSlide = createSlice({
         },
         clearCart: (state) => {
             state.cartItem = [];
+            sessionStorage.removeItem('cartState');
         }
     }
-})
+});
 
 export const { setDataProduct, addCartItem, deleteCartItem, increaseQty, decreaseQty, clearCart } = productSlide.actions
 
