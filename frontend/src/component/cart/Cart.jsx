@@ -14,7 +14,6 @@ const Cart = () => {
 
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handlePayment = async () => {
     if (user.email) {
